@@ -1,0 +1,10 @@
+C:\Users\Admin-PC\source\repos\GregRundownCore\GregRundownCore\bin\Debug\netstandard2.1\GregRundownCore.deps.json
+C:\Users\Admin-PC\source\repos\GregRundownCore\GregRundownCore\bin\Debug\netstandard2.1\GregRundownCore.dll
+C:\Users\Admin-PC\source\repos\GregRundownCore\GregRundownCore\bin\Debug\netstandard2.1\GregRundownCore.pdb
+C:\Users\Admin-PC\source\repos\GregRundownCore\GregRundownCore\obj\x64\Debug\netstandard2.1\GregRundownCore.csproj.AssemblyReference.cache
+C:\Users\Admin-PC\source\repos\GregRundownCore\GregRundownCore\obj\x64\Debug\netstandard2.1\GregRundownCore.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin-PC\source\repos\GregRundownCore\GregRundownCore\obj\x64\Debug\netstandard2.1\GregRundownCore.AssemblyInfoInputs.cache
+C:\Users\Admin-PC\source\repos\GregRundownCore\GregRundownCore\obj\x64\Debug\netstandard2.1\GregRundownCore.AssemblyInfo.cs
+C:\Users\Admin-PC\source\repos\GregRundownCore\GregRundownCore\obj\x64\Debug\netstandard2.1\GregRundownCore.csproj.CoreCompileInputs.cache
+C:\Users\Admin-PC\source\repos\GregRundownCore\GregRundownCore\obj\x64\Debug\netstandard2.1\GregRundownCore.dll
+C:\Users\Admin-PC\source\repos\GregRundownCore\GregRundownCore\obj\x64\Debug\netstandard2.1\GregRundownCore.pdb
