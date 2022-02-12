@@ -108,7 +108,7 @@ namespace GregRundownCore
                 m_ObjectiveTimer.m_timerText.SetText("GAINED THE LEAD!");
                 player.m_ambienceLight.color = new(1, 0.9f, 0.4f, 1);
                 player.m_ambientPoint.SetRange(50);
-                player.m_ambientPoint.m_intensity = 0.8f;
+                player.m_ambientPoint.m_intensity = 0.2f;
                 player.Sound.Post(2763547111);
                 enableDisplay = true;
             }

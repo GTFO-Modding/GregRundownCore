@@ -1,6 +1,7 @@
 ﻿using AssetShards;
 using BepInEx;
 using BepInEx.IL2CPP;
+using CellMenu;
 using GTFO.API;
 using HarmonyLib;
 using MTFO.Managers;
@@ -9,6 +10,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using UnhollowerRuntimeLib;
 using UnityEngine;
+using UnityEngine.Video;
 
 namespace GregRundownCore
 {
@@ -43,9 +45,23 @@ namespace GregRundownCore
             NetworkAPI.RegisterEvent<byte>("SmallPickupCollected", GameScoreManager.SyncRecieveUpdateScore);
             NetworkAPI.RegisterEvent<byte>("GregSpawned", Patch.SyncRecieveApplause);
             NetworkAPI.RegisterEvent<byte>("PlayerDowned", Patch.SyncRecieveGasp);
-
             L.Error(LoadBNK(File.ReadAllBytes(@$"{ConfigManager.CustomPath}\GregRundownAudio.json"), out var bnkID));
             L.Error(bnkID);
+
+            MainMenuGuiLayer.Current.PageIntro.m_step = CM_IntroStep.Init;
+            MainMenuGuiLayer.Current.PageIntro.m_bgScare1.clip = AssetAPI.GetLoadedAsset("Assets/Bundle/GregRundown/Content/IntroMovie.mp4").TryCast<VideoClip>();
+            MainMenuGuiLayer.Current.PageIntro.m_bgScare1.gameObject.active = true;
+            MainMenuGuiLayer.Current.PageIntro.m_bgScare1.transform.localPosition = new(0, 0, 0);
+            MainMenuGuiLayer.Current.PageIntro.m_bgScare1.transform.localScale = new(1.6f, 1.35f, 1f);
+            MainMenuGuiLayer.Current.PageIntro.m_bgScare1.loopPointReached = AddListener(MainMenuGuiLayer.Current.PageIntro.m_bgScare1.loopPointReached, (Action<VideoPlayer>)OnVideoEnd);
+            MainMenuGuiLayer.Current.PageIntro.m_bgScare1.Play();
+            CM_PageBase.PostSound(3103472528);
+        }
+
+        public void OnVideoEnd(VideoPlayer player)
+        {
+            player.gameObject.active = false;
+            MainMenuGuiLayer.Current.PageIntro.OnSkip();
         }
 
         public static bool LoadBNK(byte[] bytes, out uint bnkID)
@@ -81,6 +97,17 @@ namespace GregRundownCore
                 bnkID = 0;
                 return false;
             }
+        }
+        static T1 AddListener<T1, T2>(T1 orig, T2 newDelegate) where T1 : Il2CppSystem.Delegate where T2 : System.Delegate
+        {
+            //Thank you sinai! <3 <3 <3 <3
+            if (orig == null)
+                return DelegateSupport.ConvertDelegate<T1>(newDelegate);
+
+            return Il2CppSystem.Delegate.Combine(
+                    orig,
+                    DelegateSupport.ConvertDelegate<T1>(newDelegate))
+                .TryCast<T1>();
         }
 
         private Harmony m_Harmony;

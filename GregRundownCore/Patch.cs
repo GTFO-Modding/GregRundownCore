@@ -1,5 +1,7 @@
-﻿using CellMenu;
+﻿using AK;
+using CellMenu;
 using Enemies;
+using Globals;
 using GTFO.API;
 using HarmonyLib;
 using LevelGeneration;
@@ -9,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Video;
 
 namespace GregRundownCore
 {
@@ -154,6 +157,45 @@ namespace GregRundownCore
         {
             var music = GregsHouse.GregManagers.GetComponent<GlobalMusicManager>();
             if (!music.m_MenuThemePlaying) music.Play("play_Song_Menu");
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(CM_PageIntro), nameof(CM_PageIntro.SetPageActive))]
+        public static bool SetPageActive(CM_PageIntro __instance, bool active)
+        {
+            __instance.m_isActive = active;
+            __instance.gameObject.active = true;
+
+            if (active)
+            {
+                if (Global.SkipIntro)
+                {
+                    __instance.m_step = CM_IntroStep.WaitForNetwork;
+                    return false;
+                }
+                MusicManager.Machine.Sound.Post(EVENTS.START_SCREEN_ENTER, true);
+                if (Global.ShowStartupScreen)
+                {
+                    //__instance.PrepareForStartupScreen();
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CM_PageIntro), nameof(CM_PageIntro.OnSkip))]
+        public static void OnSkip()
+        {
+            CM_PageBase.PostSound(1837763790);
+        }
+        
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CM_PageRundown_New), nameof(CM_PageRundown_New.OnEnable))]
+        public static void CM_PageRundown_New_OnEnable()
+        {
+            MainMenuGuiLayer.Current.PageIntro.gameObject.active = false;
         }
 
 
