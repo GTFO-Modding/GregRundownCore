@@ -38,6 +38,12 @@ namespace GregRundownCore
             tier3.localEulerAngles = Vector3.zero;
             tier3.gameObject.active = true;
 
+            var tierS = Rundown.FindChild("GUIX_layer_surface");
+            tierS.localPosition = new(-363.8f, -851.9f, 128);
+            tierS.localScale = new(0.75f, 0.75f, 0);
+            tierS.localEulerAngles = Vector3.zero;
+            tierS.gameObject.active = true;
+
             var background = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             UnityEngine.Object.Destroy(background.GetComponent<Collider>());
             background.transform.parent = Rundown;
@@ -118,6 +124,30 @@ namespace GregRundownCore
                 new Vector2(0, 0),
                 1
             );
+
+            var stageSelect = new GameObject();
+            stageSelect.name = "StageSelectOverlay";
+            stageSelect.layer = LayerMask.NameToLayer("UI");
+            stageSelect.transform.parent = Rundown;
+            stageSelect.transform.localPosition = new(-637.3497f, -1265.282f, 128);
+            stageSelect.transform.localScale = new(1.25f, 1.25f, 1);
+
+            spriteRenderer = stageSelect.AddComponent<SpriteRenderer>();
+            spriteRenderer.sprite = Sprite.Create
+            (
+                AssetAPI.GetLoadedAsset("Assets/Bundle/GregRundown/Content/StageSelect.png").TryCast<Texture2D>(),
+                new Rect(new(0, 0), new(1024, 1024)),
+                new Vector2(0, 0),
+                1
+            );
+            spriteRenderer.color = new(1, 1, 1, 0.3f);
+
+            levels[0].transform.localPosition = new(-300, -460, 0);
+            levels[1].transform.localPosition = new(0, -460, 0);
+            levels[2].transform.localPosition = new(300, -460, 0);
+            levels[3].transform.localPosition = new(0, -690, 0);
+            levels[4].transform.localPosition = new(300, -690, 0);
+            levels[5].transform.localPosition = new(300, -920, 0);
         }
 
         public static IEnumerator HideBlueShit()
