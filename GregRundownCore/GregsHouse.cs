@@ -25,6 +25,8 @@ namespace GregRundownCore
             ClassInjector.RegisterTypeInIl2Cpp<LevelLightManager>();
             ClassInjector.RegisterTypeInIl2Cpp<LightAnimator>();
             ClassInjector.RegisterTypeInIl2Cpp<AutoRespawn>();
+            ClassInjector.RegisterTypeInIl2Cpp<GlobalMusicManager>();
+            ClassInjector.RegisterTypeInIl2Cpp<RundownBGRotation>();
             CoroutineHandler.Init();
 
             AssetShardManager.add_OnStartupAssetsLoaded((Action)OnStartupAssetsLoaded);
@@ -36,6 +38,7 @@ namespace GregRundownCore
             GregManagers.name = "GregRundown_Manager";
             GregManagers.AddComponent<LevelLightManager>();
             GregManagers.AddComponent<GameScoreManager>();
+            GregManagers.AddComponent<GlobalMusicManager>();
 
             NetworkAPI.RegisterEvent<byte>("SmallPickupCollected", GameScoreManager.SyncRecieveUpdateScore);
             NetworkAPI.RegisterEvent<byte>("GregSpawned", Patch.SyncRecieveApplause);
@@ -81,6 +84,6 @@ namespace GregRundownCore
         }
 
         private Harmony m_Harmony;
-        public GameObject GregManagers { get; set; }
+        public static GameObject GregManagers { get; set; }
     }
 }

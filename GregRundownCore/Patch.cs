@@ -109,7 +109,7 @@ namespace GregRundownCore
                     case 0: first = $"<uppercase><color=green><u>1ST PLACE</u>//:<color=white> {leaderboard[0].Player.NickName} - {leaderboard[0].Score}</uppercase></color>\n"; break;
                     case 1: second = $"<uppercase><color=white><u>2ND PLACE</u>//:<color=white> {leaderboard[1].Player.NickName} - {leaderboard[1].Score}</uppercase></color>\n"; break;
                     case 2: third = $"<uppercase><color=white><u>3RD PLACE</u>//:<color=white> {leaderboard[2].Player.NickName} - {leaderboard[2].Score}</uppercase></color>\n"; break;
-                    case 3: fourth = $"<uppercase><color=white<u>>4TH PLACE</u>//:<color=white> {leaderboard[3].Player.NickName} - {leaderboard[3].Score}</uppercase></color>\n"; break;
+                    case 3: fourth = $"<uppercase><color=white><u>4TH PLACE</u>//:<color=white> {leaderboard[3].Player.NickName} - {leaderboard[3].Score}</uppercase></color>\n"; break;
                 }
             }
 
@@ -131,12 +131,36 @@ namespace GregRundownCore
             __instance.m_playerReports[winnerIndex].m_name.color = Color.green;
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CM_PageRundown_New), nameof(CM_PageRundown_New.Setup))]
+        public static void CM_PageRundown_New_Setup(CM_PageRundown_New __instance)
+        {
+            __instance.m_buttonConnect.OnBtnPressCallback = null;
+            __instance.m_buttonConnect.add_OnBtnPressCallback((Action<int>)((_) => GregsHouse.GregManagers.GetComponent<GlobalMusicManager>().Play("play_MenuOK")));
+            __instance.m_buttonConnect.add_OnBtnPressCallback((Action<int>)((_) => GregsHouse.GregManagers.GetComponent<GlobalMusicManager>().Play("play_Song_Menu")));
+            __instance.m_buttonConnect.add_OnBtnPressCallback((Action<int>)((_) => __instance.SetRundownFullyRevealed()));
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CM_PageRundown_New), nameof(CM_PageRundown_New.SetRundownFullyRevealed))]
+        public static void SetRundownFullyRevealed(CM_PageRundown_New __instance)
+        {
+            CustomRundownPage.Setup(__instance);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GS_Lobby), nameof(GS_Lobby.Enter))]
+        public static void GS_Lobby_Enter()
+        {
+            var music = GregsHouse.GregManagers.GetComponent<GlobalMusicManager>();
+            if (!music.m_MenuThemePlaying) music.Play("play_Song_Menu");
+        }
+
+
         public static event Action CollectedSmallPickup;
         public static event Action OnLevelCleanup;
         public static event Action OnPlayerWarped;
         public static event Action OnPlayerDowned;
-
-        public static bool SkipObjectiveUpdate;
 
         public struct ScoreBoard
         {

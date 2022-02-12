@@ -50,6 +50,12 @@ namespace GregRundownCore
 
         public void UpdateScore()
         {
+            if (m_AmbienceLightMem_Color == null) m_AmbienceLightMem_Color = PlayerManager.Current.m_localPlayerAgentInLevel.m_ambienceLight.color;
+            if (m_AmbientPointMem_Scale == null) m_AmbientPointMem_Scale = PlayerManager.Current.m_localPlayerAgentInLevel.m_ambientPoint.m_lightScale;
+
+            if (m_AmbientPointMem_Intensity == 0) m_AmbientPointMem_Intensity = PlayerManager.Current.m_localPlayerAgentInLevel.m_ambientPoint.m_intensity;
+            if (m_AmbientPointMem_Range == 0) m_AmbientPointMem_Range = PlayerManager.Current.m_localPlayerAgentInLevel.m_ambientPoint.m_invRangeSqr;
+
             List<Patch.ScoreBoard> leaderboard = new();
             SNet_Player player;
             PlayerBackpack backpack;
@@ -88,11 +94,21 @@ namespace GregRundownCore
             if (PlayerManager.Current.m_localPlayerAgentInLevel != player && PlayerManager.Current.m_localPlayerAgentInLevel == m_Leader)
             {
                 m_ObjectiveTimer.m_timerText.SetText("LOST THE LEAD!");
+                var localplayer = PlayerManager.Current.m_localPlayerAgentInLevel;
+                localplayer.m_ambienceLight.color = m_AmbienceLightMem_Color;
+                localplayer.m_ambientPoint.m_lightScale = m_AmbientPointMem_Scale;
+                localplayer.m_ambientPoint.m_invRangeSqr = m_AmbientPointMem_Range;
+                localplayer.m_ambientPoint.m_intensity = m_AmbientPointMem_Intensity;
+                localplayer.m_ambientPoint.UpdateData();
+
                 enableDisplay = true;
             }
             if (player == PlayerManager.Current.m_localPlayerAgentInLevel)
             {
                 m_ObjectiveTimer.m_timerText.SetText("GAINED THE LEAD!");
+                player.m_ambienceLight.color = new(1, 0.9f, 0.4f, 1);
+                player.m_ambientPoint.SetRange(50);
+                player.m_ambientPoint.m_intensity = 0.8f;
                 player.Sound.Post(2763547111);
                 enableDisplay = true;
             }
@@ -128,5 +144,10 @@ namespace GregRundownCore
         public PlayerAgent m_Leader;
         public float m_DisplayTimer;
         public PUI_ObjectiveTimer m_ObjectiveTimer = GuiManager.Current.m_playerLayer.m_objectiveTimer;
+
+        public Color m_AmbienceLightMem_Color;
+        public float m_AmbientPointMem_Range;
+        public float m_AmbientPointMem_Intensity;
+        public Vector3 m_AmbientPointMem_Scale;
     }
 }

@@ -30,12 +30,15 @@
   <ItemGroup>
     <Compile Include="AutoRespawn.cs" />
     <Compile Include="CoroutineHandler.cs" />
+    <Compile Include="CustomRundownPage.cs" />
     <Compile Include="GameScoreManager.cs" />
+    <Compile Include="GlobalMusicManager.cs" />
     <Compile Include="GregsHouse.cs" />
     <Compile Include="L.cs" />
     <Compile Include="LevelLightManager.cs" />
     <Compile Include="LightAnimator.cs" />
     <Compile Include="Patch.cs" />
+    <Compile Include="RundownBGRotation.cs" />
     <None Include="Dependencies.props" />
     <None Include="GameFolder.props" />
   </ItemGroup>

@@ -24,7 +24,9 @@ namespace GregRundownCore
         public void Update()
         {
             if (m_Owner.Locomotion.m_currentStateEnum != PlayerLocomotion.PLOC_State.Downed) return;
-            m_DownedText.SetText($"{m_DownedString}\nReviving in {Math.Max(0, Math.Truncate(m_RespawnTimer - Time.time))} seconds");
+
+            if (m_RespawnTimer > 0) m_DownedText.SetText($"{m_DownedString}\nReviving in {Math.Max(0, Math.Truncate(m_RespawnTimer - Time.time))} seconds");
+            else m_DownedText.SetText("Reviving");
 
 
             if (m_RespawnTimer < Time.time && m_RespawnTimer != 0)
@@ -43,11 +45,11 @@ namespace GregRundownCore
         public void OnPlayerDowned()
         {
             m_RespawnTimer = Time.time + m_RespawnDelay;
-            m_RespawnDelay += 20;
+            m_RespawnDelay += 30;
         }
 
         public float m_RespawnTimer = 0;
-        public float m_RespawnDelay = 20;
+        public float m_RespawnDelay = 30;
         public TextMeshPro m_DownedText;
         public string m_DownedString;
         public PlayerAgent m_Owner;
