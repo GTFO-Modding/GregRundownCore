@@ -56,6 +56,8 @@ namespace GregRundownCore
             MainMenuGuiLayer.Current.PageIntro.m_bgScare1.loopPointReached = AddListener(MainMenuGuiLayer.Current.PageIntro.m_bgScare1.loopPointReached, (Action<VideoPlayer>)OnVideoEnd);
             MainMenuGuiLayer.Current.PageIntro.m_bgScare1.Play();
             CM_PageBase.PostSound(3103472528);
+
+            CustomVictoryPage.Setup(MainMenuGuiLayer.Current.PageExpeditionSuccess);
         }
 
         public void OnVideoEnd(VideoPlayer player)

@@ -198,7 +198,6 @@ namespace GregRundownCore
             MainMenuGuiLayer.Current.PageIntro.gameObject.active = false;
         }
 
-
         public static event Action CollectedSmallPickup;
         public static event Action OnLevelCleanup;
         public static event Action OnPlayerWarped;
