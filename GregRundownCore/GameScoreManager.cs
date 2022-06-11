@@ -56,30 +56,61 @@ namespace GregRundownCore
             if (m_AmbientPointMem_Intensity == 0) m_AmbientPointMem_Intensity = PlayerManager.Current.m_localPlayerAgentInLevel.m_ambientPoint.m_intensity;
             if (m_AmbientPointMem_Range == 0) m_AmbientPointMem_Range = PlayerManager.Current.m_localPlayerAgentInLevel.m_ambientPoint.m_invRangeSqr;
 
-            List<Patch.ScoreBoard> leaderboard = new();
+
+            m_LeaderBoard = new();
             SNet_Player player;
+            PlayerAgent agent;
             PlayerBackpack backpack;
 
             for (int i = 0; i < SNet.Slots.SlottedPlayers.Count; i++)
             {
                 player = SNet.Slots.SlottedPlayers[i];
+                agent = PlayerManager.Current.GetPlayerAgentInSlot(player.PlayerSlotIndex());
                 if (!player.IsInSlot) continue;
 
                 backpack = PlayerBackpackManager.GetBackpack(player);
 
                 var score = new Patch.ScoreBoard();
+                var objective = WardenObjectiveManager.ActiveWardenObjective(LG_LayerType.MainLayer);
+
                 score.Player = player;
-                score.Score = backpack.CountPocketItem(WardenObjectiveManager.ActiveWardenObjective(LG_LayerType.MainLayer).Gather_ItemId);
-                leaderboard.Add(score);
+                if (objective.Gather_ItemId != 0)
+                {
+                    score.Score = backpack.CountPocketItem(WardenObjectiveManager.ActiveWardenObjective(LG_LayerType.MainLayer).Gather_ItemId);
+                    SetScore(agent, score.Score);
+                }
+                else score.Score = GetScore(agent);
+
+                m_LeaderBoard.Add(score);
             }
 
-            if (leaderboard.Count > 1)
+            if (m_LeaderBoard.Count > 1)
             {
-                leaderboard.Sort((s1, s2) => s1.Score.CompareTo(s2.Score));
-                leaderboard.Reverse();
+                m_LeaderBoard.Sort((s1, s2) => s1.Score.CompareTo(s2.Score));
+                m_LeaderBoard.Reverse();
             }
+            
 
-            AssignCrown(PlayerManager.Current.GetPlayerAgentInSlot(leaderboard[0].Player.PlayerSlotIndex()));
+            PlayerBackpackManager.UpdatePocketItemGUI();
+            AssignCrown(PlayerManager.Current.GetPlayerAgentInSlot(m_LeaderBoard[0].Player.PlayerSlotIndex()));
+        }
+
+        public void SetScore(PlayerAgent player, int score)
+        {
+            if (!m_Score.ContainsKey(player.PlayerSlotIndex)) m_Score.Add(player.PlayerSlotIndex, score);
+            else m_Score[player.PlayerSlotIndex] = score;
+        }
+
+        public int GetScore(PlayerAgent player)
+        {
+            if (!m_Score.ContainsKey(player.PlayerSlotIndex)) m_Score.Add(player.PlayerSlotIndex, 0);
+            return (m_Score[player.PlayerSlotIndex]);
+        }
+
+        public static void IncrementScore(PlayerAgent player, int value = 1)
+        {
+            Current.SetScore(player, Current.GetScore(player) + value);
+            Current.UpdateScore();
         }
         
         public void AssignCrown(PlayerAgent player)
@@ -140,7 +171,8 @@ namespace GregRundownCore
         public static GameScoreManager Current;
         public GameObject m_Crown;
         public ParticleSystem m_Confetti;
-        public Dictionary<SNet_Player, int> m_Score = new();
+        public Dictionary<int, int> m_Score = new();
+        public List<Patch.ScoreBoard> m_LeaderBoard = new();
         public PlayerAgent m_Leader;
         public float m_DisplayTimer;
         public PUI_ObjectiveTimer m_ObjectiveTimer = GuiManager.Current.m_playerLayer.m_objectiveTimer;

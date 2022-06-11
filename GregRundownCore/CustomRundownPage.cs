@@ -124,6 +124,13 @@ namespace GregRundownCore
                 new Vector2(0, 0),
                 1
             );
+            levels[6].transform.FindChild("thumbnail").GetComponent<SpriteRenderer>().sprite = Sprite.Create
+            (
+                AssetAPI.GetLoadedAsset("Assets/AssetBundles/CustomGeomorphs/Dimension_Spleef/resources/LevelIcon_Spleef.png").TryCast<Texture2D>(),
+                new Rect(new(0, 0), new(512, 512)),
+                new Vector2(0, 0),
+                1
+            );
 
             var stageSelect = new GameObject();
             stageSelect.name = "StageSelectOverlay";

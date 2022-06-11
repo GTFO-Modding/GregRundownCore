@@ -17,7 +17,7 @@ namespace GregRundownCore
         {
             Current = this;
             LG_Factory.add_OnFactoryBuildDone((Action)Setup);
-            m_SongIndex = new System.Random().Next(1, 7);
+            m_SongIndex = new System.Random().Next(1, TrackCount + 1);
 
             Patch.OnLevelCleanup += Cleanup;
             Patch.OnPlayerWarped += StartSequence;
@@ -51,21 +51,37 @@ namespace GregRundownCore
 
             var soundPlayer = PlayerManager.Current.m_localPlayerAgentInLevel.Sound;
 
-            switch (m_SongIndex)
+            if (!GregsHouse.StreamerMode.Value)
             {
-                case 1: soundPlayer.Post(3409648182u); break;
-                case 2: soundPlayer.Post(3409648181u); break;
-                case 3: soundPlayer.Post(3409648180u); break;
-                case 4: soundPlayer.Post(3409648179u); break;
-                case 5: soundPlayer.Post(3409648178u); break;
-                case 6: soundPlayer.Post(3409648177u); break;
+                switch (m_SongIndex)
+                {
+                    case 1: soundPlayer.Post(3409648182u); break;
+                    case 2: soundPlayer.Post(3409648181u); break;
+                    case 3: soundPlayer.Post(3409648180u); break;
+                    case 4: soundPlayer.Post(3409648179u); break;
+                    case 5: soundPlayer.Post(3409648178u); break;
+                    case 6: soundPlayer.Post(3409648177u); break;
+                    case 7: soundPlayer.Post(3409648176u); break;
+                    case 8: soundPlayer.Post(3409648190u); break;
+                    case 9: soundPlayer.Post(3409648191u); break;
+                }
+            }
+            
+            else
+            {
+                switch (m_SongIndex)
+                {
+                    case 1: soundPlayer.Post(3961399585u); break;
+                    case 2: soundPlayer.Post(3961399586u); break;
+                }
             }
 
+
             m_SongIndex += 1;
-            if (m_SongIndex > 6) m_SongIndex = 1;
+            if (m_SongIndex > TrackCount) m_SongIndex = 1;
 
             GuiManager.PlayerLayer.m_wardenObjective.m_itemsHeader.transform.FindChild("Text").GetComponent<TextMeshPro>().SetText("LEADERBOARD");
-            PlayerManager.Current.m_localPlayerAgentInLevel.gameObject.AddComponent<AutoRespawn>();
+            if (WardenObjectiveManager.ActiveWardenObjective(LG_LayerType.MainLayer).Type != eWardenObjectiveType.ClearAPath) PlayerManager.Current.m_localPlayerAgentInLevel.gameObject.AddComponent<AutoRespawn>();
         }
 
         public void Cleanup()
@@ -133,6 +149,11 @@ namespace GregRundownCore
         public float m_Pulse_Fast;
         public PreLitVolume m_Fog;
         public int m_SongIndex;
+        public int TrackCount { get 
+            {
+                if (GregsHouse.StreamerMode.Value) return 2;
+                else return 9;
+            }}
 
         public static LevelLightManager Current;
         public static event Action<LightAnimator.eLightAnimation, float> a_PlayAnimation;

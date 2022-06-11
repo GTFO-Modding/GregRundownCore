@@ -1,5 +1,6 @@
 ﻿using AssetShards;
 using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using CellMenu;
 using GTFO.API;
@@ -22,6 +23,7 @@ namespace GregRundownCore
         {
             m_Harmony = new Harmony("com.mccad00.GregCore");
             m_Harmony.PatchAll();
+            StreamerMode = Config.Bind("Music Settings", "Streamer Mode", false, "Enable Streamer Mode (Copywrite free music)");
 
             ClassInjector.RegisterTypeInIl2Cpp<GameScoreManager>();
             ClassInjector.RegisterTypeInIl2Cpp<LevelLightManager>();
@@ -29,6 +31,7 @@ namespace GregRundownCore
             ClassInjector.RegisterTypeInIl2Cpp<AutoRespawn>();
             ClassInjector.RegisterTypeInIl2Cpp<GlobalMusicManager>();
             ClassInjector.RegisterTypeInIl2Cpp<RundownBGRotation>();
+            ClassInjector.RegisterTypeInIl2Cpp<ShrinkingBarrier>();
             CoroutineHandler.Init();
 
             AssetShardManager.add_OnStartupAssetsLoaded((Action)OnStartupAssetsLoaded);
@@ -45,6 +48,8 @@ namespace GregRundownCore
             NetworkAPI.RegisterEvent<byte>("SmallPickupCollected", GameScoreManager.SyncRecieveUpdateScore);
             NetworkAPI.RegisterEvent<byte>("GregSpawned", Patch.SyncRecieveApplause);
             NetworkAPI.RegisterEvent<byte>("PlayerDowned", Patch.SyncRecieveGasp);
+            NetworkAPI.RegisterEvent<int>("SpleefPlatBroken", SpleefManager.OnPlatformBreakPacket);
+
             L.Error(LoadBNK(File.ReadAllBytes(@$"{ConfigManager.CustomPath}\GregRundownAudio.json"), out var bnkID));
             L.Error(bnkID);
 
@@ -56,8 +61,9 @@ namespace GregRundownCore
             MainMenuGuiLayer.Current.PageIntro.m_bgScare1.loopPointReached = AddListener(MainMenuGuiLayer.Current.PageIntro.m_bgScare1.loopPointReached, (Action<VideoPlayer>)OnVideoEnd);
             MainMenuGuiLayer.Current.PageIntro.m_bgScare1.Play();
             CM_PageBase.PostSound(3103472528);
-
-            CustomVictoryPage.Setup(MainMenuGuiLayer.Current.PageExpeditionSuccess);
+            //CustomVictoryPage.Setup(MainMenuGuiLayer.Current.PageExpeditionSuccess);
+            
+            SpleefManager.Setup();
         }
 
         public void OnVideoEnd(VideoPlayer player)
@@ -114,5 +120,6 @@ namespace GregRundownCore
 
         private Harmony m_Harmony;
         public static GameObject GregManagers { get; set; }
+        public static ConfigEntry<bool> StreamerMode;
     }
 }

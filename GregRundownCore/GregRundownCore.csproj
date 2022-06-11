@@ -40,6 +40,8 @@
     <Compile Include="LightAnimator.cs" />
     <Compile Include="Patch.cs" />
     <Compile Include="RundownBGRotation.cs" />
+    <Compile Include="ShrinkingBarrier.cs" />
+    <Compile Include="SpleefManager.cs" />
     <None Include="Dependencies.props" />
     <None Include="GameFolder.props" />
   </ItemGroup>
